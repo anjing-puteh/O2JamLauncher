@@ -39,7 +39,7 @@ namespace O2JamLauncher
             tabPage2.Text = "Settings";
 
             Timer1.Tick += new EventHandler(Timer1_Tick);
-            Timer1.Interval = 0;
+            Timer1.Interval = 5;
         }
 
         private void TabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -67,6 +67,10 @@ namespace O2JamLauncher
             Hide();
 
             app.WaitForExit();
+            if (app.ExitCode != 0)
+            {
+                MessageBox.Show("Program failed to start properly or exit unexpectedly!\n\npossibility caused by:\n- Missing Image/Interface1.opi\n- Missing Image/Playing1.opi\n- Missing Image/Avatar.opa\n- Missing Image/OJNList.dat", "Error");
+            }
             Show();
         }
 
@@ -78,7 +82,7 @@ namespace O2JamLauncher
                 string mainWindowTitle = processesByName[0].MainWindowTitle;
                 IntPtr intPtr1 = FindWindow(ref ProcessName, ref mainWindowTitle);
                 SetWindowPos(intPtr1, (int)(new IntPtr(-1)), 0, 0, Conversions.ToInteger(WinX), Conversions.ToInteger(WinY), 2);
-                if (Conversions.ToBoolean(processesByName[0].MainWindowTitle.Contains("O2-JAM").ToString().ToUpper()))
+                if (Conversions.ToBoolean(processesByName[0].MainWindowTitle.Contains(ProcessName).ToString().ToUpper()))
                 {
                     Timer1.Enabled = false;
                 }
