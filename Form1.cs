@@ -2,30 +2,43 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
+using System.Net;
+using System.Security.Principal;
 using System.Windows.Forms;
+using O2JamLauncher.Ini;
 
 namespace O2JamLauncher
 {
     public partial class Form1 : Form
     {
         // DLLs Load
-        [DllImport("user32", CharSet = CharSet.Ansi, EntryPoint = "FindWindowA", ExactSpelling = true, SetLastError = true)]
-        private static extern IntPtr FindWindow(ref string lpClassName, ref string lpWindowName);
-
-        [DllImport("user32.dll", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
+        [System.Runtime.InteropServices.DllImport("user32")]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        [System.Runtime.InteropServices.DllImport("user32")]
+        private static extern bool MoveWindow(IntPtr hWnd, int x, int y, int nWidth, int nHeight, bool bRepaint);
+        [System.Runtime.InteropServices.DllImport("user32")]
+        private static extern bool SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hwnd);
 
-        [DllImport("user32", CharSet = CharSet.Auto, ExactSpelling = false, SetLastError = true)]
-        private static extern bool SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
-
-        // Basic Declaration
-        public Timer Timer1 = new Timer();
-
         // LauncherBasicConfig
+
         public string ProcessName = "O2-JAM";
-        public string WinX = "800";
-        public string WinY = "600";
+        public string ProcessArgs = "";
+        public string ServerDomain = "samojams3.servegame.com";
+        public string WinX = "1366";
+        public string WinY = "768";
+
+        public bool window = true;
+        public bool isResize = true;
+
+        private const UInt32 SWP_NOSIZE = 0x1;
+        private const UInt32 SWP_NOMOVE = 0x2;
+        private const UInt32 SWP_NOZORDER = 0x4;
+        public const Int32 HWND_TOPMOST = -0x1;
+
+        public Timer Timer1 { get; set; } = new Timer();
+        public IniFile Config;
 
         public Form1()
         {
@@ -40,6 +53,22 @@ namespace O2JamLauncher
 
             Timer1.Tick += new EventHandler(Timer1_Tick);
             Timer1.Interval = 5;
+
+            if (!File.Exists(Application.StartupPath + "\\monoxjam.ini"))
+            {
+                File.WriteAllText(Application.StartupPath + "\\monoxjam.ini", Properties.Resources.monoxjam);
+            }
+
+            Config = new IniFile(Application.StartupPath + "\\monoxjam.ini");
+
+            window = Convert.ToBoolean(Config.IniReadValue("LAUNCHER", "WindowMode"));
+            isResize = Convert.ToBoolean(Config.IniReadValue("LAUNCHER", "IsResize"));
+            ProcessName = Config.IniReadValue("LAUNCHER", "ProcessName");
+            ServerDomain = Config.IniReadValue("LAUNCHER", "ServerDomain");
+            WinX = Config.IniReadValue("LAUNCHER", "WinX");
+            WinY = Config.IniReadValue("LAUNCHER", "WinY");
+
+            checkBox1.Checked = window;
         }
 
         private void TabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -52,6 +81,14 @@ namespace O2JamLauncher
 
         }
 
+        private bool checkAdministrator()
+        {
+            var identity = WindowsIdentity.GetCurrent();
+            var principal = new WindowsPrincipal(identity);
+
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
         private void Button1_Click(object sender, EventArgs e)
         {
             if (!File.Exists(Application.StartupPath + "\\otwo.exe")) {
@@ -59,37 +96,53 @@ namespace O2JamLauncher
                 return;
             }
 
-            Process app = new Process();
-            app.StartInfo.FileName = Application.StartupPath + "\\otwo.exe";
-            app.StartInfo.Arguments = "";
-            app.Start();
-            Timer1.Start();
-            Hide();
-
-            app.WaitForExit();
-            if (app.ExitCode != 0)
+            if (window & isResize & !checkAdministrator())
             {
-                MessageBox.Show("Program failed to start properly or exit unexpectedly!\n\npossibility caused by:\n- Missing Image/Interface1.opi\n- Missing Image/Playing1.opi\n- Missing Image/Avatar.opa\n- Missing Image/OJNList.dat", "Error");
+                DialogResult res = MessageBox.Show("This launcher not running in Administrator, and Window Resizer may not working properly continue?", "Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                if (res == DialogResult.No)
+                {
+                    return;
+                }
             }
-            Show();
+
+            try
+            {
+                IPAddress[] addressList = Dns.GetHostEntry(ServerDomain).AddressList;
+                ProcessArgs = string.Concat(new string[] { " 1 ", addressList[0].ToString(), " o2jam/patch ", addressList[0].ToString(), ":15000 1 1 1 1 1 1 1 1 ", addressList[0].ToString(), " 15010 ", addressList[0].ToString(), " 15010 ", addressList[0].ToString(), " 15010 ", addressList[0].ToString(), " 15010 ", addressList[0].ToString(), " 15010 ", addressList[0].ToString(), " 15010 ", addressList[0].ToString(), " 15010 ", addressList[0].ToString(), " 15010" });
+
+                ProcessStartInfo proc = new ProcessStartInfo()
+                {
+                    FileName = Environment.CurrentDirectory + "\\otwo.exe",
+                    Arguments = ProcessArgs,
+                    WindowStyle = ProcessWindowStyle.Normal
+                };
+
+                Process.Start(proc);
+                Timer1.Start();
+            } catch (Exception error)
+            {
+                ProjectData.SetProjectError(error);
+                MessageBox.Show(error.ToString(), "Error");
+                ProjectData.ClearProjectError();
+            }
         }
 
         private void Timer1_Tick(object sender, EventArgs e)
         {
-            Process[] processesByName = Process.GetProcessesByName("otwo");
+            IntPtr hWnd;
+            Process[] NoteProc = Process.GetProcessesByName("otwo"); // Get Notepad's handle
             try
             {
-                string mainWindowTitle = processesByName[0].MainWindowTitle;
-                IntPtr intPtr1 = FindWindow(ref ProcessName, ref mainWindowTitle);
-                SetWindowPos(intPtr1, (int)(new IntPtr(-1)), 0, 0, Conversions.ToInteger(WinX), Conversions.ToInteger(WinY), 2);
-                if (Conversions.ToBoolean(processesByName[0].MainWindowTitle.Contains(ProcessName).ToString().ToUpper()))
+                hWnd = FindWindow("O2-JAM", NoteProc[0].MainWindowTitle);
+                SetWindowPos(hWnd, (int)(new IntPtr(HWND_TOPMOST)), 0, 0, int.Parse(WinX), int.Parse(WinY), SWP_NOMOVE);
+                if (Conversions.ToBoolean(NoteProc[0].MainWindowTitle.Contains("O2-JAM").ToString().ToUpper()))
                 {
                     Timer1.Enabled = false;
                 }
-            } catch (Exception error)
+            }
+            catch (Exception ex)
             {
-                ProjectData.SetProjectError(error);
-                ProjectData.ClearProjectError();
+                MessageBox.Show(ex.ToString(), "Error");
             }
         }
     }
