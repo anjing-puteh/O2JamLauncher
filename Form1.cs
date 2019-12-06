@@ -29,12 +29,16 @@ namespace O2JamLauncher
         public string ServerDomain = "samojams3.servegame.com";
         public string WinX = "1366";
         public string WinY = "768";
+        public string LagFix = "";
 
         public bool window = true;
         public bool isResize = true;
+        public bool DefaultServer = true;
+        public bool DefaultProcess = true;
 
         private const UInt32 SWP_NOSIZE = 0x1;
         private const UInt32 SWP_NOMOVE = 0x2;
+        private const UInt32 SWP_SHOWWINDOW = 0x0040;
         private const UInt32 SWP_NOZORDER = 0x4;
         public const Int32 HWND_TOPMOST = -0x1;
 
@@ -51,6 +55,7 @@ namespace O2JamLauncher
         {
             Text = "MonoxJam Launcher";
             Icon = Properties.Resources.Icon3;
+            MaximizeBox = false;
             tabPage1.Text = "Home";
             tabPage2.Text = "Settings";
 
@@ -66,15 +71,64 @@ namespace O2JamLauncher
 
             window = Convert.ToBoolean(Config.IniReadValue("LAUNCHER", "WindowMode"));
             isResize = Convert.ToBoolean(Config.IniReadValue("LAUNCHER", "IsResize"));
+            DefaultServer = Convert.ToBoolean(Config.IniReadValue("LAUNCHER", "DefaultServer"));
+            DefaultProcess = Convert.ToBoolean(Config.IniReadValue("LAUNCHER", "DefaultProcess"));
             ProcessName = Config.IniReadValue("LAUNCHER", "ProcessName");
             ServerDomain = Config.IniReadValue("LAUNCHER", "ServerDomain");
             WinX = Config.IniReadValue("LAUNCHER", "WinX");
             WinY = Config.IniReadValue("LAUNCHER", "WinY");
+            LagFix = Config.IniReadValue("LAUNCHER", "LAGFIX");
 
             label8.Text = "Config loaded!";
+            textBox3.Text = ServerDomain;
+
+            if (DefaultServer)
+            {
+                ServerDomain = "dnso2.o2jam.com.ph";
+                checkBox3.Checked = true;
+                textBox3.Enabled = false;
+                button3.Enabled = false;
+            }
+
+            textBox4.Text = ProcessName;
+
+            if (DefaultProcess)
+            {
+                textBox4.Enabled = false;
+                button4.Enabled = false;
+                ProcessName = "O2-JAM";
+                checkBox6.Checked = true;
+            }
+
+            switch (LagFix)
+            {
+                case "DDRAW":
+                    checkBox4.Checked = true;
+                    break;
+
+                case "DXWRAPPER":
+                    checkBox7.Checked = true;
+                    break;
+
+                case "DDRAWCOMPACT":
+                    checkBox5.Checked = true;
+                    break;
+
+                default:
+                    break;
+            };
 
             checkBox1.Checked = window;
             checkBox2.Checked = isResize;
+
+            if (!window)
+            {
+                checkBox2.Enabled = false;
+                textBox1.Enabled = false;
+                textBox2.Enabled = false;
+                button2.Enabled = false;
+            }
+
             textBox1.Text = WinX;
             textBox2.Text = WinY;
 
@@ -83,7 +137,6 @@ namespace O2JamLauncher
 
             textBox1.MaxLength = 5;
             textBox2.MaxLength = 5;
-
         }
 
         private void TabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -95,30 +148,26 @@ namespace O2JamLauncher
         {
             if (checkBox1.Checked)
             {
-                if (File.Exists(Application.StartupPath + "\\ddraw.dll"))
+                try
                 {
-                    try
-                    {
-                        File.Delete(Application.StartupPath + "\\ddraw.dll");
-                    }
-                    catch (Exception error)
-                    {
-                        if (error.InnerException is UnauthorizedAccessException)
-                        {
-                            MessageBox.Show("Unable to change config because missing permission!", "Error");
-                            return;
-                        }
+                    ResourceManager.DeleteDLL();
 
-                        if (error.InnerException is IOException)
-                        {
-                            MessageBox.Show("Unable to change config because file still in use!", "Error");
-                            return;
-                        }
-                        // silent error;
+                    ResourceManager.ExtractDDL("DINPUT");
+                } catch (Exception error)
+                {
+                    if (error.InnerException is UnauthorizedAccessException)
+                    {
+                        MessageBox.Show("Unable to change config because missing permission!", "Error");
+                        return;
                     }
+
+                    if (error.InnerException is IOException)
+                    {
+                        MessageBox.Show("Unable to change config because file still in use!", "Error");
+                        return;
+                    }
+                    // silent error;
                 }
-
-                File.WriteAllBytes(Application.StartupPath + "\\dinput.dll", Properties.Resources.dinput);
 
                 checkBox2.Enabled = true;
                 if (checkBox2.Checked)
@@ -128,38 +177,46 @@ namespace O2JamLauncher
                     button2.Enabled = true;
                 }
 
-                Config.IniWriteValue("LAUNCHER", "WindowMode", "true");
+                checkBox4.Enabled = false;
+                checkBox5.Enabled = false;
+                checkBox7.Enabled = false;
 
-                
+                Config.IniWriteValue("LAUNCHER", "WindowMode", "true"); 
             } else
             {
-                if (File.Exists(Application.StartupPath + "\\dinput.dll"))
+                try
                 {
-                    try
-                    {
-                        File.Delete(Application.StartupPath + "\\dinput.dll");
-                    }
-                    catch (Exception error)
-                    {
-                        if (error.InnerException is UnauthorizedAccessException)
-                        {
-                            MessageBox.Show("File Delete Error: Access Denied!", "Error");
-                            return;
-                        }
+                    ResourceManager.DeleteDLL();
 
-                        if (error.InnerException is IOException)
-                        {
-                            MessageBox.Show("Unable to change config because file still in use!", "Error");
-                            return;
-                        }
-                        // silent error;
+                    if (Config.IniReadValue("LAUNCHER", "LagFix") != "")
+                    {
+                        ResourceManager.ExtractDDL(Config.IniReadValue("LAUNCHER", "LagFix"));
                     }
+                }
+                catch (Exception error)
+                {
+                    if (error.InnerException is UnauthorizedAccessException)
+                    {
+                        MessageBox.Show("Unable to change config because missing permission!", "Error");
+                        return;
+                    }
+
+                    if (error.InnerException is IOException)
+                    {
+                        MessageBox.Show("Unable to change config because file still in use!", "Error");
+                        return;
+                    }
+                    // silent error;
                 }
 
                 checkBox2.Enabled = false;
                 textBox1.Enabled = false;
                 textBox2.Enabled = false;
                 button2.Enabled = false;
+
+                checkBox4.Enabled = true;
+                checkBox5.Enabled = true;
+                checkBox7.Enabled = true;
 
                 Config.IniWriteValue("LAUNCHER", "WindowMode", "false");
             }
@@ -203,7 +260,10 @@ namespace O2JamLauncher
 
                 Process.Start(proc);
                 label8.Text = "Game running!";
-                Timer1.Start();
+                if (isResize)
+                {
+                    Timer1.Start();
+                }
             } catch (Exception error)
             {
                 ProjectData.SetProjectError(error);
@@ -234,7 +294,7 @@ namespace O2JamLauncher
             try
             {
                 hWnd = FindWindow(ProcessName, NoteProc[0].MainWindowTitle);
-                SetWindowPos(hWnd, (int)(new IntPtr(HWND_TOPMOST)), 0, 0, int.Parse(WinX), int.Parse(WinY), SWP_NOMOVE);
+                SetWindowPos(hWnd, (int)(new IntPtr(HWND_TOPMOST)), 0, 0, int.Parse(WinX), int.Parse(WinY), SWP_SHOWWINDOW);
                 if (Conversions.ToBoolean(NoteProc[0].MainWindowTitle.Contains(ProcessName).ToString().ToUpper()))
                 {
                     Timer1.Enabled = false;
@@ -269,6 +329,225 @@ namespace O2JamLauncher
                 textBox1.Enabled = false;
                 textBox2.Enabled = false;
             }
+        }
+
+        private void CheckBox3_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox3.Checked)
+            {
+                ServerDomain = "dnso2.o2jam.com.ph";
+                textBox3.Enabled = false;
+                button3.Enabled = false;
+
+                Config.IniWriteValue("LAUNCHER", "DefaultServer", "true");
+            } else
+            {
+                ServerDomain = Config.IniReadValue("LAUNCHER", "ServerDomain");
+                textBox3.Enabled = true;
+                button3.Enabled = true;
+
+                Config.IniWriteValue("LAUNCHER", "DefaultServer", "false");
+            }
+        }
+
+        private void Button3_Click(object sender, EventArgs e)
+        {
+            ServerDomain = textBox3.Text;
+            Config.IniWriteValue("LAUNCHER", "ServerDomain", ServerDomain);
+            label8.Text = "Server Domain Set!";
+        }
+
+        private void CheckBox4_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox4.Checked)
+            {
+                checkBox5.Checked = false;
+                checkBox7.Checked = false;
+
+                LagFix = "DDRAWCOMPACT";
+                Config.IniWriteValue("LAUNCHER", "LagFix", LagFix);
+
+                try
+                {
+                    ResourceManager.DeleteDLL();
+                    ResourceManager.ExtractDDL(LagFix);
+                } catch (Exception error)
+                {
+                    if (error.InnerException is UnauthorizedAccessException)
+                    {
+                        MessageBox.Show("Unable to change config because missing permission!", "Error");
+                        return;
+                    }
+
+                    if (error.InnerException is IOException)
+                    {
+                        MessageBox.Show("Unable to change config because file still in use!", "Error");
+                        return;
+                    }
+                    // silent error;
+                }
+            } else
+            {
+                try
+                {
+                    ResourceManager.DeleteDLL();
+                }
+                catch (Exception error)
+                {
+                    if (error.InnerException is UnauthorizedAccessException)
+                    {
+                        MessageBox.Show("Unable to change config because missing permission!", "Error");
+                        return;
+                    }
+
+                    if (error.InnerException is IOException)
+                    {
+                        MessageBox.Show("Unable to change config because file still in use!", "Error");
+                        return;
+                    }
+                    // silent error;
+                }
+
+                Config.IniWriteValue("LAUNCHER", "LagFix", "");
+            }
+        }
+
+        private void CheckBox5_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox5.Checked)
+            {
+                checkBox4.Checked = false;
+                checkBox7.Checked = false;
+
+                LagFix = "DDRAW";
+                Config.IniWriteValue("LAUNCHER", "LagFix", LagFix);
+
+                try
+                {
+                    ResourceManager.DeleteDLL();
+                    ResourceManager.ExtractDDL(LagFix);
+                }
+                catch (Exception error)
+                {
+                    if (error.InnerException is UnauthorizedAccessException)
+                    {
+                        MessageBox.Show("Unable to change config because missing permission!", "Error");
+                        return;
+                    }
+
+                    if (error.InnerException is IOException)
+                    {
+                        MessageBox.Show("Unable to change config because file still in use!", "Error");
+                        return;
+                    }
+                    // silent error;
+                } 
+            } else
+            {
+                try
+                {
+                    ResourceManager.DeleteDLL();
+                }
+                catch (Exception error)
+                {
+                    if (error.InnerException is UnauthorizedAccessException)
+                    {
+                        MessageBox.Show("Unable to change config because missing permission!", "Error");
+                        return;
+                    }
+
+                    if (error.InnerException is IOException)
+                    {
+                        MessageBox.Show("Unable to change config because file still in use!", "Error");
+                        return;
+                    }
+                    // silent error;
+                }
+
+                Config.IniWriteValue("LAUNCHER", "LagFix", "");
+            }
+        }
+
+        private void CheckBox7_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox7.Checked)
+            {
+                checkBox4.Checked = false;
+                checkBox5.Checked = false;
+
+                LagFix = "DXWRAPPER";
+                Config.IniWriteValue("LAUNCHER", "LagFix", LagFix);
+
+                try
+                {
+                    ResourceManager.DeleteDLL();
+                    ResourceManager.ExtractDDL(LagFix);
+                }
+                catch (Exception error)
+                {
+                    if (error.InnerException is UnauthorizedAccessException)
+                    {
+                        MessageBox.Show("Unable to change config because missing permission!", "Error");
+                        return;
+                    }
+
+                    if (error.InnerException is IOException)
+                    {
+                        MessageBox.Show("Unable to change config because file still in use!", "Error");
+                        return;
+                    }
+                    // silent error;
+                } 
+            } else
+            {
+                try
+                {
+                    ResourceManager.DeleteDLL();
+                }
+                catch (Exception error)
+                {
+                    if (error.InnerException is UnauthorizedAccessException)
+                    {
+                        MessageBox.Show("Unable to change config because missing permission!", "Error");
+                        return;
+                    }
+
+                    if (error.InnerException is IOException)
+                    {
+                        MessageBox.Show("Unable to change config because file still in use!", "Error");
+                        return;
+                    }
+                    // silent error;
+                }
+
+                Config.IniWriteValue("LAUNCHER", "LagFix", "");
+            }
+        }
+
+        private void CheckBox6_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox6.Checked)
+            {
+                textBox4.Enabled = false;
+                button4.Enabled = false;
+                ProcessName = "O2-JAM";
+
+                Config.IniWriteValue("LAUNCHER", "DefaultProcess", "true");
+            } else
+            {
+                textBox4.Enabled = true;
+                button4.Enabled = true;
+                ProcessName = Config.IniReadValue("LAUNCHER", "ProcessName");
+
+                Config.IniWriteValue("LAUNCHER", "DefaultProcess", "false");
+            }
+        }
+
+        private void Button4_Click(object sender, EventArgs e)
+        {
+            ProcessName = textBox4.Text;
+            Config.IniWriteValue("LAUNCHER", "ProcessName", ProcessName);
+            label8.Text = "ProcessName Set!";
         }
     }
 }

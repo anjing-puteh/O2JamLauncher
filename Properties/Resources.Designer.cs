@@ -63,6 +63,43 @@ namespace O2JamLauncher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] DDRAW1 {
+            get {
+                object obj = ResourceManager.GetObject("DDRAW1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ;; Config file for DirectX DLL Wrapper
+        ///[General]
+        ///LoadCustomDllPath        = 
+        ///RunProcess               = 
+        ///WaitForProcess           = 0
+        ///
+        ///[Compatibility]
+        ///D3d8to9                  = 0
+        ///DDrawCompat              = 1
+        ///DDrawCompatDisableGDIHook = 1
+        ///DSoundCtrl               = 0
+        ///
+        ///[Window]
+        ///FullScreen               = 1
+        ///ForceWindowResize        = 0
+        ///WaitForWindowChanges     = 0
+        ///
+        ///[AppCompatData]
+        ///DisableMaxWindowedMode   = 0.
+        /// </summary>
+        internal static string DDRAW2 {
+            get {
+                return ResourceManager.GetString("DDRAW2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] DDRAWCOMPACT {
             get {
                 object obj = ResourceManager.GetObject("DDRAWCOMPACT", resourceCulture);

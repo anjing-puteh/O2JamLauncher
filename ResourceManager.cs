@@ -22,6 +22,11 @@ namespace O2JamLauncher.ResourceMGR
                     File.WriteAllBytes(Application.StartupPath + "\\dxwnd.exe", Properties.Resources.DXWRAPPER5);
                     break;
 
+                case "DDRAW":
+                    File.WriteAllBytes(Application.StartupPath + "\\ddraw.dll", Properties.Resources.DDRAW1);
+                    File.WriteAllText(Application.StartupPath + "\\ddraw.ini", Properties.Resources.DDRAW2);
+                    break;
+
                 case "DINPUT":
                     File.WriteAllBytes(Application.StartupPath + "\\dinput.dll", Properties.Resources.dinput);
                     break;

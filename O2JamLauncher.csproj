@@ -103,12 +103,14 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <None Include="README.md" />
+    <None Include="Resources\DDRAW2.ini" />
     <None Include="Resources\DXWRAPPER2.ini" />
     <None Include="Resources\DXWRAPPER4.ini" />
     <None Include="Resources\monoxjam.ini" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icon3.ico" />
+    <Content Include="Resources\DDRAW1.dll" />
     <Content Include="Resources\DDRAWCOMPACT.dll" />
     <None Include="Resources\DXWRAPPER3.dll" />
     <None Include="Resources\DXWRAPPER5.exe" />
@@ -124,4 +126,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>
