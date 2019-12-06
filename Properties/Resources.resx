@@ -118,8 +118,29 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="DDRAWCOMPACT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\ddrawcompact.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="dinput" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\dinput.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="DXWRAPPER1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DXWRAPPER1.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="DXWRAPPER2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DXWRAPPER2.ini;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="DXWRAPPER3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DXWRAPPER3.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="DXWRAPPER4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DXWRAPPER4.ini;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="DXWRAPPER5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DXWRAPPER5.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Icon3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\icon3.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="monoxjam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\monoxjam.ini;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>

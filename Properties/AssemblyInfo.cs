@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("O2JamLauncher")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("MonoxJam")]
+[assembly: AssemblyDescription("O2Jam Launcher")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("O2JamLauncher")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyCompany("https://monox.xyz")]
+[assembly: AssemblyProduct("")]
+[assembly: AssemblyCopyright("Copyright © Monox 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

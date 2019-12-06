@@ -63,10 +63,130 @@ namespace O2JamLauncher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] DDRAWCOMPACT {
+            get {
+                object obj = ResourceManager.GetObject("DDRAWCOMPACT", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] dinput {
             get {
                 object obj = ResourceManager.GetObject("dinput", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] DXWRAPPER1 {
+            get {
+                object obj = ResourceManager.GetObject("DXWRAPPER1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ;; Config file for DirectX DLL Wrapper
+        ///[General]
+        ///LoadCustomDllPath        = 
+        ///RunProcess               = 
+        ///WaitForProcess           = 0
+        ///
+        ///[Compatibility]
+        ///D3d8to9                  = 0
+        ///DDrawCompat              = 1
+        ///DDrawCompatDisableGDIHook = 1
+        ///DSoundCtrl               = 0
+        ///
+        ///[Window]
+        ///FullScreen               = 0
+        ///ForceWindowResize        = 0
+        ///WaitForWindowChanges     = 0
+        ///
+        ///[AppCompatData]
+        ///DisableMaxWindowedMode   = 0.
+        /// </summary>
+        internal static string DXWRAPPER2 {
+            get {
+                return ResourceManager.GetString("DXWRAPPER2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] DXWRAPPER3 {
+            get {
+                object obj = ResourceManager.GetObject("DXWRAPPER3", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [window]
+        ///posx=894
+        ///posy=418
+        ///sizx=320
+        ///sizy=200
+        ///[target]
+        ///title0=o2jam
+        ///path0=o2jam.exe
+        ///launchpath0=
+        ///module0=
+        ///opengllib0=
+        ///notes0=
+        ///registry0=
+        ///ver0=0
+        ///coord0=0
+        ///flag0=2
+        ///flagg0=1073741824
+        ///flagh0=20
+        ///flagi0=4194304
+        ///flagj0=128
+        ///flagk0=0
+        ///flagl0=0
+        ///flagm0=0
+        ///tflag0=0
+        ///posx0=50
+        ///posy0=50
+        ///sizx0=800
+        ///sizy0=600
+        ///maxfps0=0
+        ///initts0=0
+        ///winver0=0
+        ///maxres0=-1
+        ///swapeffect0=0
+        ///maxddinterface0=7
+        ///.
+        /// </summary>
+        internal static string DXWRAPPER4 {
+            get {
+                return ResourceManager.GetString("DXWRAPPER4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] DXWRAPPER5 {
+            get {
+                object obj = ResourceManager.GetObject("DXWRAPPER5", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Icon3 {
+            get {
+                object obj = ResourceManager.GetObject("Icon3", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -97,7 +217,7 @@ namespace O2JamLauncher.Properties {
         ///EnableExtraKey=0
         ///ShowFps=1
         ///UseCursorClip=1
-        ///UseBackground [rest of string was truncated]&quot;;.
+        ///UseBackgr [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string monoxjam {
             get {
