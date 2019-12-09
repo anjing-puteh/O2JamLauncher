@@ -30,11 +30,17 @@ namespace O2JamLauncher
         public string WinX = "1366";
         public string WinY = "768";
         public string LagFix = "";
+        public string WebPort = "";
+        public string GamePort = "";
+
+        public string defaultGamePort = "15010";
+        public string defaultWebPort = "15000";
 
         public bool window = true;
         public bool isResize = true;
         public bool DefaultServer = true;
         public bool DefaultProcess = true;
+        public bool DefaultPort = true;
 
         private const UInt32 SWP_NOSIZE = 0x1;
         private const UInt32 SWP_NOMOVE = 0x2;
@@ -58,6 +64,7 @@ namespace O2JamLauncher
             MaximizeBox = false;
             tabPage1.Text = "Home";
             tabPage2.Text = "Settings";
+            tabPage3.Text = "About";
 
             Timer1.Tick += new EventHandler(Timer1_Tick);
             Timer1.Interval = 5;
@@ -73,11 +80,14 @@ namespace O2JamLauncher
             isResize = Convert.ToBoolean(Config.IniReadValue("LAUNCHER", "IsResize"));
             DefaultServer = Convert.ToBoolean(Config.IniReadValue("LAUNCHER", "DefaultServer"));
             DefaultProcess = Convert.ToBoolean(Config.IniReadValue("LAUNCHER", "DefaultProcess"));
+            DefaultPort = Convert.ToBoolean(Config.IniReadValue("LAUNCHER", "DefaultPort"));
             ProcessName = Config.IniReadValue("LAUNCHER", "ProcessName");
             ServerDomain = Config.IniReadValue("LAUNCHER", "ServerDomain");
             WinX = Config.IniReadValue("LAUNCHER", "WinX");
             WinY = Config.IniReadValue("LAUNCHER", "WinY");
             LagFix = Config.IniReadValue("LAUNCHER", "LAGFIX");
+            textBox5.Text = Config.IniReadValue("LAUNCHER", "GamePort");
+            textBox6.Text = Config.IniReadValue("LAUNCHER", "WebPort");
 
             label8.Text = "Config loaded!";
             textBox3.Text = ServerDomain;
@@ -98,6 +108,16 @@ namespace O2JamLauncher
                 button4.Enabled = false;
                 ProcessName = "O2-JAM";
                 checkBox6.Checked = true;
+            }
+
+            if (DefaultPort)
+            {
+                GamePort = defaultGamePort;
+                WebPort = defaultWebPort;
+            } else
+            {
+                GamePort = textBox5.Text;
+                WebPort = textBox6.Text;
             }
 
             switch (LagFix)
@@ -137,6 +157,8 @@ namespace O2JamLauncher
 
             textBox1.MaxLength = 5;
             textBox2.MaxLength = 5;
+
+            webBrowser1.Url = new Uri("https://monox.xyz/o2jam");
         }
 
         private void TabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -249,7 +271,7 @@ namespace O2JamLauncher
             try
             {
                 IPAddress[] addressList = Dns.GetHostEntry(ServerDomain).AddressList;
-                ProcessArgs = string.Concat(new string[] { " 1 ", addressList[0].ToString(), " o2jam/patch ", addressList[0].ToString(), ":15000 1 1 1 1 1 1 1 1 ", addressList[0].ToString(), " 15010 ", addressList[0].ToString(), " 15010 ", addressList[0].ToString(), " 15010 ", addressList[0].ToString(), " 15010 ", addressList[0].ToString(), " 15010 ", addressList[0].ToString(), " 15010 ", addressList[0].ToString(), " 15010 ", addressList[0].ToString(), " 15010" });
+                ProcessArgs = string.Concat(new string[] { " 1 ", addressList[0].ToString(), " o2jam/patch ", addressList[0].ToString(), ":" + WebPort +" 1 1 1 1 1 1 1 1 ", addressList[0].ToString(), " " + GamePort + " ", addressList[0].ToString(), " " + GamePort + " ", addressList[0].ToString(), " " + GamePort + " ", addressList[0].ToString(), " " + GamePort + " ", addressList[0].ToString(), " " + GamePort + " ", addressList[0].ToString(), " " + GamePort + " ", addressList[0].ToString(), " " + GamePort + " ", addressList[0].ToString(), " " + GamePort });
 
                 ProcessStartInfo proc = new ProcessStartInfo()
                 {
@@ -339,12 +361,20 @@ namespace O2JamLauncher
                 textBox3.Enabled = false;
                 button3.Enabled = false;
 
+                textBox5.Enabled = false;
+                textBox6.Enabled = false;
+                button5.Enabled = false;
+
                 Config.IniWriteValue("LAUNCHER", "DefaultServer", "true");
             } else
             {
                 ServerDomain = Config.IniReadValue("LAUNCHER", "ServerDomain");
                 textBox3.Enabled = true;
                 button3.Enabled = true;
+
+                textBox5.Enabled = true;
+                textBox6.Enabled = true;
+                button5.Enabled = true;
 
                 Config.IniWriteValue("LAUNCHER", "DefaultServer", "false");
             }
@@ -548,6 +578,27 @@ namespace O2JamLauncher
             ProcessName = textBox4.Text;
             Config.IniWriteValue("LAUNCHER", "ProcessName", ProcessName);
             label8.Text = "ProcessName Set!";
+        }
+
+        private void WebBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+
+        }
+
+        private void TextBox5_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Button5_Click(object sender, EventArgs e)
+        {
+            GamePort = textBox5.Text;
+            WebPort = textBox6.Text;
+
+            Config.IniWriteValue("LAUNCHER", "GamePort", GamePort);
+            Config.IniWriteValue("LAUNCHER", "WebPort", WebPort);
+
+            label8.Text = "GamePort Set!";
         }
     }
 }
